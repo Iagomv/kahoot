@@ -1,20 +1,25 @@
-import {useState} from 'react'
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
-import Cuestionarios from './pages/cuestionarios'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+import Cuestionarios from './pages/Cuestionarios'
+import Navegador from './components/Navegador'
+import Usuarios from './pages/Usuarios'
 
 function App() {
-  return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Cuestionarios />}></Route>
-          <Route path="" element={''}></Route>
-          <Route path="" element={''}></Route>
-        </Routes>
-      </BrowserRouter>
-    </>
-  )
+	return (
+		<>
+			<BrowserRouter>
+				<Navegador />
+
+				<Routes>
+					<Route path="/usuarios" element={<Usuarios />}></Route>
+					<Route path="/cuestionarios" element={<Cuestionarios />}></Route>
+					<Route path="/crearCuestionario" element={''}></Route>
+				</Routes>
+			</BrowserRouter>
+		</>
+	)
 }
 
 export default App
