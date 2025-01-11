@@ -20,7 +20,7 @@ const Cuestionarios = () => {
 	//TODO Crear cuestionario
 	return (
 		<>
-			<h1>Lista de cuestionarios</h1>
+			<h1 className="display-1 m-3">Lista de cuestionarios</h1>
 
 			{cuestionarios.map((cuestionario) => {
 				return (

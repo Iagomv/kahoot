@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 export const Navegador = () => {
+	//Navegador con enlaces a las distintas paginas
+	// Usuarios, Cuestionarios, CrearCuestionario, Unirse
 	return (
 		<>
 			<ul className="nav  fixed-top justify-content-center">
@@ -11,15 +13,18 @@ export const Navegador = () => {
 					</Link>
 				</li>
 				<li className="nav-item">
-					{/* Usando <Link> para navegación en React Router */}
 					<Link className="nav-link active" to="/cuestionarios">
 						Cuestionarios
 					</Link>
 				</li>
 				<li className="nav-item">
-					{/* Usando <Link> para navegación en React Router */}
 					<Link className="nav-link active" to="/crearCuestionario">
 						Crear cuestionario
+					</Link>
+				</li>
+				<li className="nav-item">
+					<Link className="nav-link active" to="/registro">
+						Registrarse
 					</Link>
 				</li>
 			</ul>
