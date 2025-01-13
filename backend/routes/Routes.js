@@ -57,8 +57,34 @@ router.get('/usuarios', (req, res) => {
 	})
 })
 
+// Login usuario
+router.post('/usuario/login', (req, res) => {
+	// Consulta SQL
+	const sql = 'SELECT * FROM usuarios WHERE email = ? AND password = ?'
+	const { email, password } = req.body // Extraer datos del cuerpo de la solicitud
+
+	// Ejecutar la consulta
+	db.query(sql, [email, password], (err, result) => {
+		if (err) {
+			return res.status(500).json({ message: 'Error del servidor', error: err })
+		}
+
+		// Verificar si se encontró un usuario
+		if (result.length === 0) {
+			return res.status(401).json({ message: 'Credenciales incorrectas.' })
+		}
+
+		// Retornar respuesta exitosa con datos básicos del usuario
+		const user = result[0]
+		return res.status(200).json({
+			message: 'Inicio de sesión exitoso.',
+			token: { id: user.id, email: user.email, nombre: user.nombre, tipo: user.tipo }, // Solo datos necesarios
+		})
+	})
+})
+
 // Insertar nuevo usuario
-router.post('/usuario/:id', (req, res) => {
+router.post('/usuario', (req, res) => {
 	const sql = 'INSERT INTO usuarios SET ?'
 	const usuario = req.body
 	db.query(sql, usuario, (err, result) => {
@@ -83,6 +109,26 @@ router.delete('/usuario/:id', (req, res) => {
 	const sql = 'DELETE FROM usuarios WHERE id = ?'
 	const id = parseInt(req.params.id, 10)
 	db.query(sql, [id], (err, result) => {
+		if (err) return res.json(err)
+		return res.json(result)
+	})
+})
+
+//Existe email
+router.get('/existeEmail/:email', (req, res) => {
+	const sql = 'SELECT * FROM usuarios WHERE email = ?'
+	const email = req.params.email
+	db.query(sql, [email], (err, result) => {
+		if (err) return res.json(err)
+		return res.json(result)
+	})
+})
+
+//Existe usuario
+router.get('/existeUsuario/:usuario', (req, res) => {
+	const sql = 'SELECT * FROM usuarios WHERE nombre = ?'
+	const usuario = req.params.usuario
+	db.query(sql, [usuario], (err, result) => {
 		if (err) return res.json(err)
 		return res.json(result)
 	})
