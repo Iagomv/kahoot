@@ -20,16 +20,17 @@ const Cuestionarios = () => {
 	//TODO Crear cuestionario
 	return (
 		<>
-			<h1 className="display-1 m-3">Lista de cuestionarios</h1>
-
-			{cuestionarios.map((cuestionario) => {
-				return (
-					<div key={cuestionario.id} id="listaCuestionarios" className="container text-center p-3 mt-3">
-						<h5>{cuestionario.titulo}</h5>
-						<p>{cuestionario.tema}</p>
-					</div>
-				)
-			})}
+			<div className="container fixed-top mt-5">
+				<h1 className="display-1">Lista de cuestionarios</h1>
+				{cuestionarios.map((cuestionario) => {
+					return (
+						<div key={cuestionario.id} id="listaCuestionarios" className="container text-center p-3 mt-3">
+							<h5>{cuestionario.titulo}</h5>
+							<p>{cuestionario.tema}</p>
+						</div>
+					)
+				})}
+			</div>
 		</>
 	)
 }

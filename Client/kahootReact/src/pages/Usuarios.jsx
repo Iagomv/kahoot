@@ -39,18 +39,20 @@ export const Usuarios = () => {
 	//Render
 	return (
 		<>
-			<h1 className="display-1">Usuarios</h1>
-			<button onClick={cambiarModoEdicion} className={modoEdicion ? 'btn btn-primary' : 'btn btn-primary'}>
-				{textoBotonEdicion}
-			</button>
-			<div id="divUsuarios" className="container d-flex flex-wrap justify-content-center mt-3 gap-4">
-				{usuarios.map((usuario) => {
-					return (
-						<div key={usuario.id}>
-							{modoEdicion ? <UsuarioEditable usuario={usuario} /> : <InfoUsuario usuario={usuario} />}
-						</div>
-					)
-				})}
+			<div className="container fixed-top mt-5">
+				<h1 className="display-1">Usuarios</h1>
+				<button onClick={cambiarModoEdicion} className={modoEdicion ? 'btn btn-primary' : 'btn btn-primary'}>
+					{textoBotonEdicion}
+				</button>
+				<div id="divUsuarios" className="container d-flex flex-wrap justify-content-center mt-3 gap-4">
+					{usuarios.map((usuario) => {
+						return (
+							<div key={usuario.id}>
+								{modoEdicion ? <UsuarioEditable usuario={usuario} /> : <InfoUsuario usuario={usuario} />}
+							</div>
+						)
+					})}
+				</div>
 			</div>
 		</>
 	)
