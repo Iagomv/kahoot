@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -8,37 +8,35 @@ import Usuarios from './pages/Usuarios'
 import Registro from './pages/Registro'
 import CrearCuestionario from './pages/CrearCuestionario'
 import Login from './pages/Login'
-
-import { AuthProvider, useAuthProvider } from './Provider/AuthContext' // Importa el proveedor y el hook
-
-// Este componente ahora solo gestiona las rutas
-function AppRoutes() {
-	const { token } = useAuthProvider() // Obtiene el token desde el contexto
-
-	return (
-		<>
-			<Navegador /> {/* Navegador puede acceder al token */}
-			<Routes>
-				<Route path="/registro" element={<Registro />}></Route>
-				<Route path="/login" element={<Login />}></Route>
-				{token?.tipo === 'admin' && <Route path="/usuarios" element={<Usuarios />}></Route>}
-				<Route path="/cuestionarios" element={<Cuestionarios />}></Route>
-				<Route path="/crearCuestionario" element={<CrearCuestionario />}></Route>
-			</Routes>
-		</>
-	)
-}
+import {useEffect, useState} from 'react'
+import {EditarCuestionario} from './pages/EditarCuestionario'
 
 function App() {
-	return (
-		<AuthProvider>
-			{' '}
-			{/* Proveedor envolviendo toda la app */}
-			<BrowserRouter>
-				<AppRoutes /> {/* Contiene las rutas que dependen del token */}
-			</BrowserRouter>
-		</AuthProvider>
-	)
+  const [token, setToken] = useState(null)
+
+  useEffect(() => {
+    localStorage.setItem('token', JSON.stringify(token))
+    if (token) {
+      console.log(token)
+    }
+  }, [token])
+
+  return (
+    <>
+      <BrowserRouter>
+        <Navegador token={token} setToken={setToken} />
+
+        <Routes>
+          <Route path="/registro" element={<Registro />}></Route>
+          <Route path="/login" element={<Login setToken={setToken} />}></Route>
+          <Route path="/usuarios" element={<Usuarios token={token} />}></Route>
+          <Route path="/cuestionarios" element={<Cuestionarios token={token} />}></Route>
+          <Route path="/crearCuestionario" element={<CrearCuestionario token={token} />}></Route>
+          <Route path="/editarCuestionario/:id" element={<EditarCuestionario token={token} />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </>
+  )
 }
 
 export default App
