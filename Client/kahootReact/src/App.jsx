@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -8,33 +8,35 @@ import Usuarios from './pages/Usuarios'
 import Registro from './pages/Registro'
 import CrearCuestionario from './pages/CrearCuestionario'
 import Login from './pages/Login'
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
+import {EditarCuestionario} from './pages/EditarCuestionario'
 
 function App() {
-	const [privilegios, setPrivilegios] = useState('jugador')
+  const [token, setToken] = useState(null)
 
-	useEffect(() => {
-		const token = localStorage.getItem('token')
-		if (token) {
-			setPrivilegios(token.tipo)
-		}
-	}, [])
+  useEffect(() => {
+    localStorage.setItem('token', JSON.stringify(token))
+    if (token) {
+      console.log(token)
+    }
+  }, [token])
 
-	return (
-		<>
-			<BrowserRouter>
-				<Navegador />
+  return (
+    <>
+      <BrowserRouter>
+        <Navegador token={token} setToken={setToken} />
 
-				<Routes>
-					<Route path="/registro" element={<Registro />}></Route>
-					<Route path="/login" element={<Login />}></Route>
-					{privilegios === 'admin' && <Route path="/usuarios" element={<Usuarios />}></Route>}
-					<Route path="/cuestionarios" element={<Cuestionarios />}></Route>
-					<Route path="/crearCuestionario" element={<CrearCuestionario />}></Route>
-				</Routes>
-			</BrowserRouter>
-		</>
-	)
+        <Routes>
+          <Route path="/registro" element={<Registro />}></Route>
+          <Route path="/login" element={<Login setToken={setToken} />}></Route>
+          <Route path="/usuarios" element={<Usuarios token={token} />}></Route>
+          <Route path="/cuestionarios" element={<Cuestionarios token={token} />}></Route>
+          <Route path="/crearCuestionario" element={<CrearCuestionario token={token} />}></Route>
+          <Route path="/editarCuestionario/:id" element={<EditarCuestionario token={token} />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </>
+  )
 }
 
 export default App
