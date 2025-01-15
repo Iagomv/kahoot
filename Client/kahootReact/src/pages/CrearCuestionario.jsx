@@ -12,7 +12,15 @@ export const CrearCuestionario = () => {
 		titulo: '',
 		tema: '',
 	})
-
+	//Comprobacion de sesion
+	useEffect(() => {
+		const token = localStorage.getItem('token')
+		if (token) {
+			console.log(token)
+		} else {
+			console.log('No hay token')
+		}
+	}, [])
 	// Cuando cambia la informacion del cuestionario se actualiza el useState
 	const handleCambioInfo = (e) => {
 		setInfoCuestionario({

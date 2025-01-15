@@ -2,14 +2,17 @@ import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import axios from 'axios'
+import { AuthProvider, useAuthProvider } from '../Provider/AuthContext' // Importa el proveedor y el hook
 const Login = () => {
 	// Estado para almacenar la información de inicio de sesión
+	const { setToken } = useAuthProvider() // Accede a setToken del contexto
 	const navigate = useNavigate()
 	const [loginInfo, setLoginInfo] = useState({
 		email: '',
 		password: '',
 	})
 
+	//Validacion de email y contraseña mediante regEx
 	const validacionDatos = () => {
 		const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/ // Valida emails estándar
 		const regexPassword = /^[A-Za-z\d]{6,20}$/ // Solo letras y números, longitud entre 6 y 20
@@ -39,16 +42,25 @@ const Login = () => {
 		})
 	}
 
+	// Handler para iniciar sesión haciendo consulta post a la api, tras validar los datos(regEx)
 	const handleLogin = async (e) => {
 		e.preventDefault()
 		if (!validacionDatos()) {
 			return
 		}
 		try {
+			console.log(loginInfo)
 			const response = await axios.post('http://localhost:6245/usuario/login', loginInfo)
 			if (response.status === 200) {
 				console.log(response.data.token)
-				localStorage.setItem('token', JSON.stringify(response.data.token))
+
+				const token = JSON.stringify(response.data.token)
+				console.log(token)
+
+				// 2. Actualizar el token en el contexto global
+				setToken(token)
+
+				// 3. Redirigir al usuario
 				navigate('/cuestionarios')
 			}
 		} catch (error) {
