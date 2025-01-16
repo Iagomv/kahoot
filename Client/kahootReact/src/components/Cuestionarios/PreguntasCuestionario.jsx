@@ -1,39 +1,52 @@
-import React, { useEffect } from 'react'
-import { MostrarOpcionPregunta } from './MostrarOpcionPregunta'
+import React, {useEffect, useState} from 'react'
+import {MostrarOpcionesPregunta} from './MostrarOpcionesPregunta'
 
-export const PreguntasCuestionario = ({ preguntas }) => {
-	//useEffect para obtener las opciones de la pregunta al cargar el componente
-	useEffect(() => {
-		const buscaPreguntas = async () => {
-			try {
-				console.log(id)
-				const response = await axios.get(`http://localhost:6245/preguntas/${id}`)
-				console.log(response.data)
-				setPreguntas(response.data)
-			} catch (error) {
-				console.log(error)
-			}
-		}
-		buscaPreguntas()
-	}, [])
-	return (
-		<>
-			<h5>Preguntas</h5>
-			{preguntas.map((pregunta, index) => {
-				return (
-					<>
-						<div key={index} className="container p-3 d-flex flex-column gap-2 m-5 bg-light rounded shadow-sm">
-							<p className="row justify-content-center">tiempo: {pregunta.tiempo_respuesta}</p>
-							<h5>{pregunta.texto}</h5>
-							{/* {pregunta.opciones.map((opcion, indexOpcion) => {
-								return <MostrarOpcionPregunta key={indexOpcion} opcion={opcion} />
-							})} */}
-						</div>
-					</>
-				)
-			})}
-		</>
-	)
+export const PreguntasCuestionario = ({cuestionario, setCuestionario}) => {
+  const [preguntas, setPreguntas] = useState(cuestionario.preguntas || [])
+
+  const [numeroPregunta, setNumeroPregunta] = useState(-1)
+
+  const handleClickPregunta = (index) => {
+    setNumeroPregunta(index)
+  }
+
+  useEffect(() => {}, [numeroPregunta])
+  //Al cargar el componente asignamos el estado de las preguntas
+  useEffect(() => {
+    setPreguntas(cuestionario.preguntas)
+    console.log('preguntas', preguntas)
+  }, [])
+  return (
+    <div className="row mt-3">
+      <div className="col-6 overflow-auto" style={{maxHeight: '65vh'}}>
+        <h5>Preguntas</h5>
+        {preguntas.map((pregunta, index) => (
+          <div
+            key={index} // El key debe estar aquí para cada pregunta
+            className="container p-3 d-flex flex-column gap-2 m-3 bg-light rounded shadow-sm"
+            onClick={() => handleClickPregunta(index)}
+          >
+            <p className="row justify-content-center">tiempo: {pregunta.tiempo_respuesta}</p>
+            <h5>{pregunta.pregunta_texto}</h5>
+          </div>
+        ))}
+      </div>
+
+      <div className="col-6">
+        <h3>{numeroPregunta === -1 ? 'Selecciona la pregunta' : `Pregunta ${numeroPregunta + 1}`}</h3>
+        {numeroPregunta !== -1 && (
+          <MostrarOpcionesPregunta
+            pregunta={preguntas[numeroPregunta]} // Pasa la pregunta seleccionada
+            cuestionario={cuestionario}
+            index={numeroPregunta}
+            setCuestionario={setCuestionario}
+            preguntas={preguntas}
+            setPreguntas={setPreguntas}
+          />
+        )}
+      </div>
+    </div>
+  )
 }
 
 export default PreguntasCuestionario
