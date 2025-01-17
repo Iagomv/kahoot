@@ -93,13 +93,6 @@ export const CrearCuestionario = ({ token }) => {
 		agregarNuevaPregunta()
 	}, [preguntas])
 
-	// TODO Enviar el cuestionario
-	// const enviarCuestionario = async () => {
-	// 	if (infoCuestionario.titulo !== '' && infoCuestionario.tema !== '') {
-	// 		const reqBody = { infoCuestionario, preguntas }
-	// 		const response = await axios.post('http://localhost:6245/cuestionario', reqBody)
-	// 	}
-	// }
 	const enviarCuestionario = async () => {
 		// Generar el objeto a partir del estado
 		const cuestionario = {
