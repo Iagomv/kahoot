@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import axios from 'axios'
 
 export const MostrarOpcionesPregunta = ({pregunta, index, setCuestionario, preguntas, setPreguntas, cuestionario}) => {
   const [opciones, setOpciones] = useState([])
@@ -49,6 +50,33 @@ export const MostrarOpcionesPregunta = ({pregunta, index, setCuestionario, pregu
     setOpciones(opcionesActualizadas)
   }
 
+  //Actualizar la pregunta a traves de la API
+  const actualizarCuestionario = async (pregunta) => {
+    console.log('pregunta enviada', pregunta)
+    let errores = []
+    console.log(pregunta)
+    try {
+      const responsePregunta = await axios.put('http://localhost:6245/pregunta', pregunta)
+      if (responsePregunta.data !== null && responsePregunta.status === 207) {
+        try {
+          pregunta.opciones.forEach(async (opcion) => {
+            const responseOpciones = await axios.put('http://localhost:6245/opcion', opcion)
+            if (responseOpciones.data !== null && responseOpciones.status === 207) {
+              console.log('opcion actualizada')
+            }
+          })
+        } catch (error) {
+          errores.push(error)
+        }
+      }
+    } catch (error) {
+      errores.push(error)
+    }
+    errores.length == 0
+      ? alert('Pregunta actualizada')
+      : alert('Error al actualizar la pregunta') && console.log(errores)
+  }
+
   useEffect(() => {
     console.log(cuestionario)
   }, [cuestionario])
@@ -92,6 +120,9 @@ export const MostrarOpcionesPregunta = ({pregunta, index, setCuestionario, pregu
           </li>
         ))}
       </ul>
+      <button className="btn btn-primary btn-sm" onClick={() => actualizarCuestionario(cuestionario.preguntas[index])}>
+        Guardar
+      </button>
     </div>
   )
 }

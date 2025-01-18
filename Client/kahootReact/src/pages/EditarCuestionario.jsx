@@ -27,8 +27,7 @@ export const EditarCuestionario = () => {
   }, [id]) // Agregar `id` como dependencia para mayor claridad
 
   useEffect(() => {
-    console.log('Cambios en EditarCuestionario')
-    console.log(cuestionario)
+    console.log('Cambios en EditarCuestionario -> cuestionario:', cuestionario)
   }, [cuestionario])
   if (cargando) {
     return <p>Cargando cuestionario...</p> // Indicador de carga
