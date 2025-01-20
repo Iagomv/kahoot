@@ -57,9 +57,10 @@ const Login = ({ setToken }) => {
 		}
 	}
 	return (
-		<div className="container ">
-			<form className="form p-3 d-flex flex-column gap-3 bg-light rounded shadow-sm">
-				<div className="container p-3">
+		<div className="container w-25 bg-white rounded shadow-sm">
+			<form className="form p-3 d-flex flex-column gap-3 ">
+				<h2>Inicio de sesión</h2>
+				<div className="container ">
 					<div className="form-group">
 						<label htmlFor="inputEmail" className="form-label">
 							Email
@@ -69,6 +70,7 @@ const Login = ({ setToken }) => {
 							type="email"
 							className="form-control"
 							name="email"
+							placeholder="iago@email.com"
 							onChange={(e) => handleCambioInfo(e)}
 						/>
 					</div>
@@ -81,10 +83,11 @@ const Login = ({ setToken }) => {
 							type="password"
 							className="form-control"
 							name="password"
+							placeholder="Password123"
 							onChange={(e) => handleCambioInfo(e)}
 						/>
 					</div>
-					<button className="btn btn-primary mt-3 col-6" onClick={(e) => handleLogin(e)}>
+					<button className="btn btn-outline-secondary mt-3 col-6" onClick={(e) => handleLogin(e)}>
 						Login
 					</button>
 				</div>

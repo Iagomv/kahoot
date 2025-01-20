@@ -5,7 +5,7 @@ export const OpcionInputNuevaPregunta = ({ pregunta, index, indexOpcion, handleC
 		<div className="justify-content-center">
 			<div className="form-check form-switch">
 				<div className="row justify-content-space-around">
-					<p className="">Respuesta {indexOpcion + 1}</p>
+					<p className="">Opcion {indexOpcion + 1}</p>
 					<input
 						className="form-check-input"
 						type="checkbox"

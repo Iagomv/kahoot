@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { InputNuevaPregunta } from '../components/Cuestionarios/InputNuevaPregunta'
+import { TituloTemaCrearCuestionario } from '../components/Cuestionarios/TituloTemaCrearCuestionario'
 import { useNavigate } from 'react-router'
 import axios from 'axios'
 
@@ -22,6 +23,7 @@ export const CrearCuestionario = ({ token }) => {
 			],
 		},
 	])
+	const [mostrarInputTituloTematica, setMostrarInputTituloTematica] = useState(true)
 
 	// useEffect que se ejecuta al cargar la pestaña
 	useEffect(() => {
@@ -40,6 +42,36 @@ export const CrearCuestionario = ({ token }) => {
 			...infoCuestionario,
 			[e.target.name]: e.target.value,
 		})
+	}
+
+	const comprobarPreguntas = (cuestionario) => {
+		let errores = []
+		for (let index = 0; index < cuestionario.preguntas.length; index++) {
+			const pregunta = cuestionario.preguntas[index]
+			let hayAlUnaOpcionCorrecta = false
+
+			if (!pregunta.texto || !pregunta.tiempo_respuesta) {
+				errores.push(`La pregunta ${index + 1} no tiene ${!pregunta.texto ? 'texto' : 'tiempo de respuesta'}.`)
+				continue
+			}
+			for (let indexOpcion = 0; indexOpcion < pregunta.opciones.length; indexOpcion++) {
+				const opcion = pregunta.opciones[indexOpcion]
+				if (!opcion.texto) {
+					errores.push(`La pregunta ${index + 1} no tiene texto en la opción ${indexOpcion + 1}.`)
+					continue
+				}
+				if (opcion.es_correcta) hayAlUnaOpcionCorrecta = true
+			}
+
+			if (!hayAlUnaOpcionCorrecta) {
+				errores.push(`La pregunta ${index + 1} no tiene ninguna opción correcta.`)
+			}
+		}
+		if (errores.length > 0) {
+			alert(errores.join('\n'))
+			return false
+		}
+		return true
 	}
 
 	const handleCambioPregunta = (e, index, esOpcion = false, indexOpcion = null) => {
@@ -109,6 +141,20 @@ export const CrearCuestionario = ({ token }) => {
 				})),
 		}
 
+		if (!cuestionario.infoCuestionario.titulo || !cuestionario.infoCuestionario.tema) {
+			alert('Por favor, completa todos los campos del cuestionario')
+			return
+		}
+		if (!comprobarPreguntas(cuestionario)) return
+
+		// Comprobar que todas las preguntas tienen texto y tiempo de respuesta
+
+		cuestionario.preguntas.forEach((pregunta) => {
+			if (!pregunta.texto || !pregunta.tiempo_respuesta) {
+				alert('Por favor, completa todos los campos de las preguntas')
+				return
+			}
+		})
 		try {
 			const response = await axios.post('http://localhost:6245/cuestionario', cuestionario)
 
@@ -127,76 +173,48 @@ export const CrearCuestionario = ({ token }) => {
 
 	return (
 		<>
-			<div className="container mb-3  " style={{ overflow: 'auto' }}>
+			<div className="container fade-in bg-white" style={{ overflow: 'auto' }}>
 				{/* Fila para el encabezado */}
-				<div className="row">
-					<h1 className="display-1 mt-5">Crear cuestionario</h1>
+				<div className="row" onClick={() => setMostrarInputTituloTematica(true)}>
+					<h1 className="display-3"> {infoCuestionario.titulo ? infoCuestionario.titulo : 'Nuevo cuestionario'}</h1>
+					{infoCuestionario.tema && <p className="lead">{infoCuestionario.tema}</p>}
 				</div>
 
 				{/* Fila para título y temática */}
-				<div className="row justify-content-center">
-					<div className="container p-3 justify-content-center col-6">
-						<form className="form p-3 d-flex flex-column gap-3 bg-light rounded shadow-sm ">
-							{/* Fila título */}
-							<div className="form-group d-flex flex-row gap-5">
-								<div className="col-2">
-									<label htmlFor="inputTitulo" className="form-label">
-										Titulo
-									</label>
-								</div>
-								<input
-									id="inputTitulo"
-									type="text"
-									className="form-control input-sm"
-									name="titulo"
-									value={infoCuestionario.titulo}
-									onChange={handleCambioInfo}
-								/>
-							</div>
-
-							{/* Fila temática */}
-							<div className="form-group d-flex flex-row gap-5">
-								<div className="col-2">
-									<label htmlFor="inputTema" className="form-label">
-										Tematica
-									</label>
-								</div>
-								<input
-									id="inputTema"
-									type="text"
-									className="form-control input-sm"
-									name="tema"
-									value={infoCuestionario.tema}
-									onChange={handleCambioInfo}
-								/>
-							</div>
-						</form>
+				{mostrarInputTituloTematica && (
+					<TituloTemaCrearCuestionario
+						infoCuestionario={infoCuestionario}
+						handleCambioInfo={handleCambioInfo}
+						setMostrarInputTituloTematica={setMostrarInputTituloTematica}
+					/>
+				)}
+				{/* Fila para las preguntas */}
+				{!mostrarInputTituloTematica && (
+					<div
+						className="container row d-flex gap-3 "
+						style={{
+							maxHeight: '55vh',
+							overflowY: 'scroll',
+						}}
+					>
+						{preguntas.map((pregunta, index) => (
+							<InputNuevaPregunta
+								key={index}
+								pregunta={pregunta}
+								index={index}
+								handleCambioPregunta={handleCambioPregunta}
+							/>
+						))}
 					</div>
-				</div>
-				<div
-					id="divPreguntas "
-					className="container"
-					style={{
-						maxHeight: '60vh',
-						overflowY: 'scroll',
-						paddingTop: '10px',
-					}}
-				>
-					{/* Fila para las preguntas */}
-					{preguntas.map((pregunta, index) => (
-						<InputNuevaPregunta
-							key={index}
-							pregunta={pregunta}
-							index={index}
-							handleCambioPregunta={handleCambioPregunta}
-						/>
-					))}
-				</div>
-				<div className="row justify-content-center p-1">
-					<button className="col-2 btn btn-primary btn-md" onClick={enviarCuestionario}>
-						Enviar
-					</button>
-				</div>
+				)}
+				{/* Boton de envio de cuestionario */}
+				{!mostrarInputTituloTematica && preguntas.length > 1 && (
+					<div className="row justify-content-center p-1">
+						<button className="col-2 btn btn-primary btn-md" onClick={enviarCuestionario}>
+							Enviar
+						</button>
+					</div>
+				)}
 			</div>
 		</>
 	)

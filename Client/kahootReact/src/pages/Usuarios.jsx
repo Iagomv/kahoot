@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { InfoUsuario } from '../components/Usuarios/InfoUsuario'
 import { UsuarioEditable } from '../components/Usuarios/UsuarioEditable'
+import '../styles/FadeIn.css'
 
 export const Usuarios = ({ token }) => {
 	const [usuarios, setUsuarios] = useState([])
@@ -35,19 +36,10 @@ export const Usuarios = ({ token }) => {
 		setModoEdicion(!modoEdicion)
 	}
 
-	//Funcion para actualizar un usuario local //!Deprecated
-	//   const actualizarUsuario = (usuarioActualizado) => {
-	//     const usuariosActualizados = usuarios.map((usuario) => {
-	//       // Si el id del usuario coincide con el id proporcionado, lo actualizamos
-	//       return usuario.id === usuarioActualizado.id ? {...usuario, ...usuarioActualizado} : usuario // Si no coincide, devolvemos el usuario tal cual
-	//     })
-	//     setUsuarios(usuariosActualizados) // Actualizamos el estado con la lista modificada
-	//   }
-
 	//Render
 	return (
 		<>
-			<div className="container fixed-top mt-5">
+			<div className="fade-in container ">
 				<h1 className="display-1">Usuarios</h1>
 				<button onClick={cambiarModoEdicion} className={modoEdicion ? 'btn btn-primary' : 'btn btn-primary'}>
 					{textoBotonEdicion}

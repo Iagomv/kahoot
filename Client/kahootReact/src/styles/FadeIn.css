@@ -1,0 +1,14 @@
+/* Animación de Fade-In */
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+/* Aplicar fadeIn a todo el contenido */
+.fade-in {
+	animation: fadeIn 1s ease-in-out;
+}

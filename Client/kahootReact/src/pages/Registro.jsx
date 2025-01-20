@@ -111,15 +111,15 @@ export const Registro = () => {
 	}
 
 	return (
-		<div id="FormularioRegistro ">
-			<h1>Formulario de registro</h1>
+		<div className="container w-25 bg-white rounded shadow-sm p-4" id="FormularioRegistro ">
+			<h2>Formulario de registro</h2>
 			<form className="d-flex-row align-items-center justify-content-center mb-3">
 				<input className="form-control mt-3" type="text" name="nombre" id="nombre" placeholder="nombre de usuario" />
 
 				<input className="form-control mt-3" type="email" name="email" id="email" placeholder="email@email.com" />
 				<input className="form-control mt-3" type="password" name="password" id="password" placeholder="contraseña" />
 
-				<button className="btn btn-success mt-3" onClick={handleRegistro}>
+				<button className="btn btn-outline-secondary mt-3" onClick={handleRegistro}>
 					Registrarse
 				</button>
 			</form>
