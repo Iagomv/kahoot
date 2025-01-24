@@ -1,7 +1,4 @@
 # kahoot
-
-# React + Vite
-
 # Paquetes npm en KahootJuego
 npm i socket.io-client
 npm i bootstrap
