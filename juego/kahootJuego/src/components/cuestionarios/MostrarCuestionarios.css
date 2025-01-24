@@ -1,0 +1,11 @@
+.elementoCuestionario {
+  background-color: rgb(240, 240, 240);
+  color: black;
+}
+.elementoCuestionario:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+  background-color: rgba(162, 100, 220, 0.444);
+  color: rgb(0, 0, 0);
+  border: 1px solid black;
+}
