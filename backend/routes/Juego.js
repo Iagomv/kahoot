@@ -1,7 +1,7 @@
 import express from 'express'
 import {GeneradorPartida} from '../Helper/GeneradorPartida.js'
 import {initializeApp} from 'firebase/app'
-import {getFirestore, collection, getDocs, addDoc} from 'firebase/firestore/lite'
+import {query, where, getFirestore, collection, getDocs, addDoc} from 'firebase/firestore/lite'
 const router = express.Router()
 const firebaseConfig = {
   apiKey: 'AIzaSyBtqukHnVCOE6Wen6dXkOix7kvccelSpBM',
@@ -41,4 +41,39 @@ router.post('/partida', async (req, res) => {
     res.status(500).json({error: ex.message})
   }
 })
+
+// Comprobar existe partida
+router.get('/partida', async (req, res) => {
+  console.log(`PIN: ${req.query.pin}`)
+
+  try {
+    if (!req.query.pin) {
+      return res.status(401).json({message: 'Falta el pin tontito'})
+    }
+
+    // Coleccion
+    const partidasCollection = collection(dbFirebase, 'Partidas')
+
+    // Consulta
+    const q = query(partidasCollection, where('pin', '==', req.query.pin))
+
+    // Ejecucion
+    const querySnapshot = await getDocs(q)
+
+    // Respuesta
+    if (!querySnapshot.empty) {
+      return res.status(200).json({exists: true, nombre: req.query.nombre})
+    } else {
+      return res.json({exists: false})
+    }
+  } catch (error) {
+    console.error('Error fetching Firestore data:', error)
+    res.status(500).send('Error fetching data')
+  }
+})
+
 export default router
+
+//Ejemplo query oficial
+// Create a query against the collection.
+//const q = query(citiesRef, where("state", "==", "CA"));

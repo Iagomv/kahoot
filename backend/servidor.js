@@ -12,11 +12,11 @@ const puerto = 6245
 
 // Middleware para JSON
 app.use(express.json())
-// app.use((req, res, next) => {
-//   console.log(req.method, req.url, req.body)
+app.use((req, res, next) => {
+  console.log(req.method, req.url, req.body)
 
-//   next()
-// })
+  next()
+})
 // Enrutado de la API
 app.use('/', Routes)
 
