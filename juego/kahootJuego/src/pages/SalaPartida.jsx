@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {useParams} from 'react-router'
 import {io} from 'socket.io-client'
 
-const socket = io('http://localhost:6246') // URL del servidor Node.js
-
 export const SalaPartida = () => {
   //TODO agregar validacion de existencia de la partida
   //TODO cambiar socket
@@ -21,7 +19,7 @@ export const SalaPartida = () => {
   }, [])
   useEffect(() => {}, [])
   return (
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 ">
       {/*Header */}
       <div className="container rounded-top shadow-sm">
         <h3>Código de juego </h3>
