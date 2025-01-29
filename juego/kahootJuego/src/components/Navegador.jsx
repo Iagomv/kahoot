@@ -13,7 +13,7 @@ export const Navegador = ({ token, setToken }) => {
 
 	// Función para determinar si el enlace debe estar activo
 	const isActive = (path) => (location.pathname.startsWith(path) ? 'active' : '')
-	//TODO Cambiar IagoMV para link jugar
+	//TODO Cambiar IagoMV para link jugar (kahootReact / Crud)
 	return (
 		<div className="container">
 			<nav className="navbar navbar-dark bg-white py-3">
