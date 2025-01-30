@@ -1,0 +1,87 @@
+{
+	"id": 48,
+	"titulo": "Cuestionario de prueba",
+	"preguntas": [
+		{
+			"pregunta_texto": "¿Cuál es la capital de Francia?",
+			"tiempo_respuesta": 10,
+			"pregunta_id": 29,
+			"opciones": [
+				{
+					"id": 17,
+					"texto_opcion": "París",
+					"es_correcta": 1
+				},
+				{
+					"id": 18,
+					"texto_opcion": "Londres",
+					"es_correcta": 0
+				},
+				{
+					"id": 19,
+					"texto_opcion": "Madrid",
+					"es_correcta": 0
+				},
+				{
+					"id": 20,
+					"texto_opcion": "Roma",
+					"es_correcta": 0
+				}
+			]
+		},
+		{
+			"pregunta_texto": "¿En qué año llegó el hombre a la luna?",
+			"tiempo_respuesta": 10,
+			"pregunta_id": 30,
+			"opciones": [
+				{
+					"id": 21,
+					"texto_opcion": "1969",
+					"es_correcta": 1
+				},
+				{
+					"id": 22,
+					"texto_opcion": "197",
+					"es_correcta": 0
+				},
+				{
+					"id": 23,
+					"texto_opcion": "1959",
+					"es_correcta": 0
+				},
+				{
+					"id": 24,
+					"texto_opcion": "1981",
+					"es_correcta": 0
+				}
+			]
+		},
+		{
+			"pregunta_texto": "¿Quién pintó la Mona Lisa?",
+			"tiempo_respuesta": 10,
+			"pregunta_id": 31,
+			"opciones": [
+				{
+					"id": 25,
+					"texto_opcion": "Leonardo da Vinci",
+					"es_correcta": 1
+				},
+				{
+					"id": 26,
+					"texto_opcion": "Pablo Picasso",
+					"es_correcta": 0
+				},
+				{
+					"id": 27,
+					"texto_opcion": "Vincent van Gogh",
+					"es_correcta": 0
+				},
+				{
+					"id": 28,
+					"texto_opcion": "Claude Monet",
+					"es_correcta": 0
+				}
+			]
+		}
+	]
+}
