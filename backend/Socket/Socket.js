@@ -1,107 +1,106 @@
 import express from 'express'
 import http from 'http'
-import { Server } from 'socket.io'
+import {Server} from 'socket.io'
 import Sala from './Sala.js'
 import Jugador from './Jugador.js'
 import axios from 'axios'
-import { calculadoraPuntos } from '../Helper/CalculadoraPuntos.js'
-import { modificarPuntuacion } from '../Helper/ModificarPuntuacion.js'
+import {calculadoraPuntos} from '../Helper/CalculadoraPuntos.js'
+import {modificarPuntuacion} from '../Helper/ModificarPuntuacion.js'
 const app = express()
 
 // Configuración de Socket.io
+//!FIXME PERDIDA DE DATOS DE LAS PARTIDAS AL REINICIAR EL SERVIDOR
 const server = http.createServer(app)
 const puerto = 6246
 const io = new Server(server, {
-	cors: {
-		origin: '*', // URL de la app React
-		methods: ['GET', 'POST'],
-	},
+  cors: {
+    origin: '*', // URL de la app React
+    methods: ['GET', 'POST']
+  }
 })
 
 let salas = []
 
 // Manejo de eventos WebSocket
 io.on('connection', (socket) => {
-	console.log('Usuario conectado:', socket.id)
+  console.log('Usuario conectado:', socket.id)
 
-	socket.on('crearPartida', (data) => crearPartida(data, socket))
-	socket.on('unirsePartida', (data) => unirsePartida(data, socket))
-	socket.on('salirPartida', (data) => salirPartida(data, socket))
-	socket.on('empezarPartida', (data) => empezarPartida(data, socket))
-	socket.on('siguientePregunta', (data) => siguientePregunta(data, socket))
-	socket.on('preguntaTimeout', (data) => preguntaTimeout(data, socket)) //TODO
-	socket.on('enviarRespuesta', (data) => enviarRespuesta(data, socket))
+  socket.on('crearPartida', (data) => crearPartida(data, socket))
+  socket.on('unirsePartida', (data) => unirsePartida(data, socket))
+  socket.on('salirPartida', (data) => salirPartida(data, socket))
+  socket.on('empezarPartida', (data) => empezarPartida(data, socket))
+  socket.on('siguientePregunta', (data) => siguientePregunta(data, socket))
+  socket.on('preguntaTimeout', (data) => preguntaTimeout(data, socket)) //TODO
+  socket.on('enviarRespuesta', (data) => enviarRespuesta(data, socket))
 })
 //Funciones auxiliares
 const buscarSala = (pin) => {
-	return salas.find((sala) => sala.pin === pin)
+  return salas.find((sala) => sala.pin === pin)
 }
 
 const emitirDatosSala = (pin) => {
-	let sala = buscarSala(pin)
-	io.to(pin).emit('sala', sala)
+  let sala = buscarSala(pin)
+  io.to(pin).emit('sala', sala)
 }
 
 //Funciones de gestion de partidas asociadas a los eventos //TODO gestion de errores de conexion
 const crearPartida = (data, socket) => {
-	const nuevaSala = new Sala({
-		pin: data.pin,
-		host: data.token,
-		jugadores: [],
-		cuestionario: data.cuestionario,
-		pregunta_actual: -1,
-		timeout: false,
-	})
-	socket.join(data.pin)
-	salas.push(nuevaSala)
+  const nuevaSala = new Sala({
+    pin: data.pin,
+    host: {token: data.token, Socket: socket.id},
+    jugadores: [],
+    cuestionario: data.cuestionario,
+    pregunta_actual: -1,
+    timeout: false
+  })
+  socket.join(data.pin)
+  salas.push(nuevaSala)
 
-	emitirDatosSala(data.pin)
+  emitirDatosSala(data.pin)
 }
 const unirsePartida = (data, socket) => {
-	const sala = buscarSala(data.pin)
-	sala ? sala.agregarJugador(new Jugador({ nombre: data.token }, socket)) : console.log('La sala no existe')
-	socket.join(data.pin)
-	emitirDatosSala(data.pin)
+  const sala = buscarSala(data.pin)
+  sala ? sala.agregarJugador(new Jugador({nombre: data.token, socket: socket.id})) : console.log('La sala no existe')
+  socket.join(data.pin)
+  emitirDatosSala(data.pin)
 }
 const salirPartida = (data, socket) => {
-	const sala = buscarSala(data.pin)
-	console.log(`Jugador ${data.token} se desconectó de la partida con PIN ${data.pin}`)
-	socket.leave(data.pin)
+  console.log(`Jugador ${data.token} se desconectó de la partida con PIN ${data.pin}`)
+  socket.leave(data.pin)
 }
 const preguntaTimeout = (data, socket) => {
-	let sala = buscarSala(data.pin)
-	sala.timeout = true
-	console.log(sala)
-	emitirDatosSala(data.pin)
+  let sala = buscarSala(data.pin)
+  sala.timeout = true
+  console.log(sala)
+  emitirDatosSala(data.pin)
 }
 // axios.get -> datos restantes del cuestionario, pregunta_actual = 0
 const empezarPartida = async (data, socket) => {
-	const sala = buscarSala(data.pin)
-	sala.pregunta_actual = 0
-	const response = await axios.get(`http://localhost:6245/cuestionarioCompletoEdicion/${sala.cuestionario.id}`)
-	sala.cuestionario = { ...sala.cuestionario, ...response.data }
-	emitirDatosSala(data.pin)
+  const sala = buscarSala(data.pin)
+  sala.pregunta_actual = 0
+  const response = await axios.get(`http://localhost:6245/cuestionarioCompletoEdicion/${sala.cuestionario.id}`)
+  sala.cuestionario = {...sala.cuestionario, ...response.data}
+  emitirDatosSala(data.pin)
 }
 const siguientePregunta = (data, socket) => {
-	const sala = buscarSala(data.pin)
-	sala.timeout = false
-	sala.pregunta_actual++
-	emitirDatosSala(data.pin)
+  const sala = buscarSala(data.pin)
+  sala.timeout = false
+  sala.pregunta_actual++
+  emitirDatosSala(data.pin)
 }
 //Handler para respuesta del jugador
 const enviarRespuesta = (data, socket) => {
-	console.log('datos recibidos', data)
-	let sala = buscarSala(data.pin)
+  // console.log('datos recibidos', data)
+  let sala = buscarSala(data.pin)
 
-	let nombreJugador = data.nombre
-	let puntos = calculadoraPuntos(sala, data.indexRespuesta, data.segundosLeft)
-	console.log('calculadoraPuntos: ', puntos)
-	if (puntos > 0) modificarPuntuacion(sala, nombreJugador, puntos)
-	console.log('puntuacionModificada: ', sala.jugadores.find((jugador) => jugador.nombre === nombreJugador).puntuacion)
-	let socketJugador = sala.jugadores.find((jugador) => jugador.nombre === nombreJugador)
-	console.log('socketJugador: ', socketJugador)
-	//socket.to(socketJugador.socket.id).emit('resultadoCliente', puntos)
+  let nombreJugador = data.nombre
+  let puntos = calculadoraPuntos(sala, data.indexRespuesta, data.segundosLeft)
+  //   console.log('calculadoraPuntos: ', puntos)
+  if (puntos > 0) modificarPuntuacion(sala, nombreJugador, puntos)
+  console.log('puntuacionModificada: ', sala.jugadores.find((jugador) => jugador.nombre === nombreJugador).puntuacion)
+  let jugador = sala.jugadores.find((jugador) => jugador.nombre === nombreJugador)
+  io.to(jugador.socket).emit('resultadoCliente', {puntos: puntos})
 }
 server.listen(puerto, () => {
-	console.log('conexion en el puerto', puerto)
+  console.log('conexion en el puerto', puerto)
 })

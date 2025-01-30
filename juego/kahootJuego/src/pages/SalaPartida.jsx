@@ -22,7 +22,8 @@ export const SalaPartida = () => {
     empezarPartida,
     siguientePregunta,
     enviarRespuestaJugador,
-    preguntaTimeout
+    preguntaTimeout,
+    resultadoCliente
   } = useSocket('http://localhost:6246', pin, joinToken)
 
   //Cuando cambia el estado de la sala
@@ -39,7 +40,11 @@ export const SalaPartida = () => {
     return joinToken == null ? (
       <PantallaHost sala={sala} siguientePregunta={siguientePregunta} preguntaTimeout={preguntaTimeout} />
     ) : (
-      <PantallaJugador sala={sala} enviarRespuestaJugador={enviarRespuestaJugador} />
+      <PantallaJugador
+        sala={sala}
+        enviarRespuestaJugador={enviarRespuestaJugador}
+        resultadoCliente={resultadoCliente}
+      />
     )
   }
   const mostrarSalaEspera = () => {
