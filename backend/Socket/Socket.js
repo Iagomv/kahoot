@@ -5,10 +5,11 @@ import Sala from './Sala.js'
 import Jugador from './Jugador.js'
 import axios from 'axios'
 import {calculadoraPuntos} from '../Helper/CalculadoraPuntos.js'
-import {modificarPuntuacion} from '../Helper/ModificarPuntuacion.js'
+import {modificarPuntuacion, almacenarRespuesta} from '../Helper/ModificarPuntuacion.js'
+import {todosContestaron} from '../Helper/TodosContestaron.js'
 const app = express()
 
-// Configuración de Socket.io
+// Configuración de socket.io
 //!FIXME PERDIDA DE DATOS DE LAS PARTIDAS AL REINICIAR EL SERVIDOR
 const server = http.createServer(app)
 const puerto = 6246
@@ -30,7 +31,7 @@ io.on('connection', (socket) => {
   socket.on('salirPartida', (data) => salirPartida(data, socket))
   socket.on('empezarPartida', (data) => empezarPartida(data, socket))
   socket.on('siguientePregunta', (data) => siguientePregunta(data, socket))
-  socket.on('preguntaTimeout', (data) => preguntaTimeout(data, socket)) //TODO
+  socket.on('preguntaTimeout', (data) => preguntaTimeout(data, socket))
   socket.on('enviarRespuesta', (data) => enviarRespuesta(data, socket))
 })
 //Funciones auxiliares
@@ -45,9 +46,10 @@ const emitirDatosSala = (pin) => {
 
 //Funciones de gestion de partidas asociadas a los eventos //TODO gestion de errores de conexion
 const crearPartida = (data, socket) => {
+  console.log(socket.id)
   const nuevaSala = new Sala({
     pin: data.pin,
-    host: {token: data.token, Socket: socket.id},
+    host: {token: data.token, socket: socket.id},
     jugadores: [],
     cuestionario: data.cuestionario,
     pregunta_actual: -1,
@@ -55,7 +57,6 @@ const crearPartida = (data, socket) => {
   })
   socket.join(data.pin)
   salas.push(nuevaSala)
-
   emitirDatosSala(data.pin)
 }
 const unirsePartida = (data, socket) => {
@@ -68,39 +69,52 @@ const salirPartida = (data, socket) => {
   console.log(`Jugador ${data.token} se desconectó de la partida con PIN ${data.pin}`)
   socket.leave(data.pin)
 }
-const preguntaTimeout = (data, socket) => {
+const preguntaTimeout = (data) => {
   let sala = buscarSala(data.pin)
   sala.timeout = true
   console.log(sala)
-  emitirDatosSala(data.pin)
+  mostrarResultados(sala)
 }
 // axios.get -> datos restantes del cuestionario, pregunta_actual = 0
-const empezarPartida = async (data, socket) => {
+const empezarPartida = async (data) => {
   const sala = buscarSala(data.pin)
   sala.pregunta_actual = 0
   const response = await axios.get(`http://localhost:6245/cuestionarioCompletoEdicion/${sala.cuestionario.id}`)
   sala.cuestionario = {...sala.cuestionario, ...response.data}
   emitirDatosSala(data.pin)
 }
-const siguientePregunta = (data, socket) => {
+const siguientePregunta = (data) => {
   const sala = buscarSala(data.pin)
   sala.timeout = false
   sala.pregunta_actual++
-  emitirDatosSala(data.pin)
+  if (pregunta_actual === sala.cuestionario.preguntas.length) {
+    io.to(data.pin).emit('finalizarPartida', sala)
+  } else {
+    emitirDatosSala(data.pin)
+  }
 }
+
+// Se llama en Timeout(Al acabar el tiempo de la pregunta)
+//  y en enviarRespuesta(al contestar al jugador) if todos contestaron
+const mostrarResultados = (sala) => {
+  io.to(sala.host.socket).emit('mostrarResultados', sala)
+}
+
 //Handler para respuesta del jugador
 const enviarRespuesta = (data, socket) => {
-  // console.log('datos recibidos', data)
   let sala = buscarSala(data.pin)
-
   let nombreJugador = data.nombre
   let puntos = calculadoraPuntos(sala, data.indexRespuesta, data.segundosLeft)
-  //   console.log('calculadoraPuntos: ', puntos)
+  almacenarRespuesta(sala, nombreJugador, data.indexRespuesta)
   if (puntos > 0) modificarPuntuacion(sala, nombreJugador, puntos)
-  console.log('puntuacionModificada: ', sala.jugadores.find((jugador) => jugador.nombre === nombreJugador).puntuacion)
   let jugador = sala.jugadores.find((jugador) => jugador.nombre === nombreJugador)
   io.to(jugador.socket).emit('resultadoCliente', {puntos: puntos})
+
+  if (todosContestaron(sala)) {
+    mostrarResultados(sala)
+  }
 }
+
 server.listen(puerto, () => {
   console.log('conexion en el puerto', puerto)
 })

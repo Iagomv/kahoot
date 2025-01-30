@@ -6,6 +6,7 @@ export const useSocket = (url, pin, initialJoinToken) => {
   const isConnected = useRef(false)
   const [sala, setSala] = useState({})
   const [resultadoCliente, setResultadoCliente] = useState({})
+  const [mostrarResultados, setMostrarResultados] = useState(false)
 
   useEffect(() => {
     // Conecta el socket si no está conectado
@@ -16,7 +17,8 @@ export const useSocket = (url, pin, initialJoinToken) => {
 
     // Manejar eventos del socket
     socket.current.on('sala', (data) => setSala(data))
-    socket.current.on('resultadosHost', (data) => console.log(data))
+    //TODO
+    socket.current.on('mostrarResultados', (data) => onMostrarResultados(data))
     socket.current.on('resultadoCliente', (data) => setResultadoCliente(data.puntos))
 
     // Al desmontar el componenente, desconecta el socket
@@ -42,7 +44,13 @@ export const useSocket = (url, pin, initialJoinToken) => {
     socket.current.emit('salirPartida', {pin, token})
   }
 
+  const onMostrarResultados = (data) => {
+    console.log('onMostrarResultados', data)
+    setSala(data)
+    setMostrarResultados(true)
+  }
   const siguientePregunta = () => {
+    setMostrarResultados(false)
     socket.current.emit('siguientePregunta', {pin})
   }
   const preguntaTimeout = () => {
@@ -62,6 +70,7 @@ export const useSocket = (url, pin, initialJoinToken) => {
     siguientePregunta,
     preguntaTimeout,
     enviarRespuestaJugador,
-    resultadoCliente
+    resultadoCliente,
+    mostrarResultados
   }
 }

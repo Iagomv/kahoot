@@ -23,6 +23,7 @@ export const SalaPartida = () => {
     siguientePregunta,
     enviarRespuestaJugador,
     preguntaTimeout,
+    mostrarResultados,
     resultadoCliente
   } = useSocket('http://localhost:6246', pin, joinToken)
 
@@ -36,16 +37,27 @@ export const SalaPartida = () => {
   }, [])
 
   //Renderizados de las pantallas
-  const mostrarPantallaJuego = () => {
-    return joinToken == null ? (
-      <PantallaHost sala={sala} siguientePregunta={siguientePregunta} preguntaTimeout={preguntaTimeout} />
-    ) : (
+  const mostrarPantallaHost = () => {
+    return (
+      <PantallaHost
+        sala={sala}
+        siguientePregunta={siguientePregunta}
+        preguntaTimeout={preguntaTimeout}
+        mostrarResultados={mostrarResultados}
+      />
+    )
+  }
+  const mostrarPantallaJugador = () => {
+    return (
       <PantallaJugador
         sala={sala}
         enviarRespuestaJugador={enviarRespuestaJugador}
         resultadoCliente={resultadoCliente}
       />
     )
+  }
+  const mostrarPantallaJuego = () => {
+    return joinToken == null ? mostrarPantallaHost() : mostrarPantallaJugador()
   }
   const mostrarSalaEspera = () => {
     return (
@@ -59,6 +71,7 @@ export const SalaPartida = () => {
       />
     )
   }
+
   return (
     <>
       {sala.pregunta_actual == -1 && mostrarSalaEspera()}
