@@ -1,11 +1,16 @@
 .elementoCuestionario {
-  background-color: rgb(240, 240, 240);
-  color: black;
+	background-color: rgb(240, 240, 240);
+	color: black;
+}
+h1 {
+	color: rgb(162, 100, 220);
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-weight: 1000;
 }
 .elementoCuestionario:hover {
-  cursor: pointer;
-  transform: scale(1.1);
-  background-color: rgba(162, 100, 220, 0.444);
-  color: rgb(0, 0, 0);
-  border: 1px solid black;
+	cursor: pointer;
+	transform: scale(1.1);
+	background-color: rgba(159, 81, 232, 0.444);
+	color: rgb(0, 0, 0);
+	border: 1px solid black;
 }

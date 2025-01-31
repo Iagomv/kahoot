@@ -25,7 +25,7 @@ function App() {
 	}, [token])
 
 	return (
-		<>
+		<div id="app" className="app">
 			<BrowserRouter>
 				<Navegador token={token} setToken={setToken} />
 
@@ -39,7 +39,7 @@ function App() {
 					<Route path="/iagoKH/login" element={<Login setToken={setToken} />}></Route>
 				</Routes>
 			</BrowserRouter>
-		</>
+		</div>
 	)
 }
 

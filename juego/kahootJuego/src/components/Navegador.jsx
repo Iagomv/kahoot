@@ -16,7 +16,7 @@ export const Navegador = ({ token, setToken }) => {
 	//TODO Cambiar IagoMV para link jugar (kahootReact / Crud)
 	return (
 		<div className="container">
-			<nav className="navbar navbar-dark bg-white py-3">
+			<nav className="navbar navbar-dark bg-white p-3 m-3">
 				{/* Logo */}
 				<Link className="navbar-brand" to="/">
 					<strong>Kahoot Iago MV</strong>

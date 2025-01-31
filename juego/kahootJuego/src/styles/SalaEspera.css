@@ -1,0 +1,11 @@
+.video-container {
+	position: relative; /* Positioning for mask effect */
+	overflow: hidden; /* Hide any overflow */
+	border-radius: 50%; /* Rounded corners */
+}
+
+video {
+	border: 1px transparent;
+	mask-image: radial-gradient(circle, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, 0) 80%);
+	-webkit-mask-image: radial-gradient(circle, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, 0) 80%);
+}
